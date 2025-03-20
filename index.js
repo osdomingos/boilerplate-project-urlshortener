@@ -1,7 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const dns = require('dns');
 const app = express();
+
+let shortUrl = 0;
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -22,3 +25,15 @@ app.get('/api/hello', function(req, res) {
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
+
+app.post('/api/shorturl', (req, res, next) => {
+  shortUrl++;
+
+  dns.lookup(req.body.url, (err, url) => {
+    if (err) return res.json({ error: 'invalid url' });
+
+    res.json({ original_url: req.body.url, short_url: shortUrl})
+  })
+});
+
+

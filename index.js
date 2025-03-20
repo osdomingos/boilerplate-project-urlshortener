@@ -4,8 +4,6 @@ const cors = require('cors');
 const dns = require('dns');
 const app = express();
 
-let shortUrl = 0;
-
 // Basic Configuration
 const port = process.env.PORT || 3000;
 
@@ -25,6 +23,10 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+let shortUrl = 0;
+
+const urlDatabase = {}; 
+
 app.post('/api/shorturl', (req, res) => {
   shortUrl++;
 
@@ -37,9 +39,21 @@ app.post('/api/shorturl', (req, res) => {
       return res.json({ error: 'invalid url' });
     }
 
+    urlDatabase[shortUrl] = req.body.url;
+
     res.json({ original_url: req.body.url, short_url: shortUrl });
   });
 });
+
+app.get(`/api/shorturl/:shortUrl`, (req, res) => {
+  const originalUrl = urlDatabase[shortUrl];
+
+  if (originalUrl) {
+    res.redirect(originalUrl);
+  } else {
+    res.json({ error: 'Short URL not found' });
+  }
+})
 
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);

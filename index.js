@@ -23,12 +23,11 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-let shortUrl = 0;
+let shortUrl = 1;
 
 const urlDatabase = {}; 
 
 app.post('/api/shorturl', (req, res) => {
-  shortUrl++;
 
   console.log("Recebido:", req.body);
 
